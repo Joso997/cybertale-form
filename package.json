@@ -1,5 +1,5 @@
 {
-  "name": "@cybertale-form",
+  "name": "@cybertale/form",
   "version": "0.1.0",
   "description": "ECS interface for Web Development, CyberTale edition.",
   "author": "Joso Marich <jspmari@proton.me>",
