@@ -1,0 +1,63 @@
+{
+  "name": "cybertale-form",
+  "version": "0.1.0",
+  "description": "ECS interface for Web Development, CyberTale edition.",
+  "author": "Joso Marich <jspmari@proton.me>",
+  "license": "GPL-3.0-only",
+  "keywords": [
+    "ecs",
+    "cyber",
+    "cybertale",
+    "web",
+    "form"
+  ],
+  "main": "src/index.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Joso997/cybertale-form.git"
+  },
+  "directories": {
+    "lib": "src"
+  },
+  "types": "src/index.ts",
+  "module": "src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "require": "./src/index.ts"
+    }
+  },
+  "dependencies": {
+    "@cybertale/interface": "^2.0.6",
+    "vue": "^3.0.0",
+    "vue-class-component": "^8.0.0-0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.54.0",
+    "@typescript-eslint/parser": "^5.54.0",
+    "eslint": "^8.35.0",
+    "typescript": "^4.9.5"
+  },
+  "eslintConfig": {
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/vue3-essential",
+      "@vue/standard",
+      "@vue/typescript/recommended"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 2020,
+      "sourceType": "module"
+    },
+    "rules": {
+      "@typescript-eslint/no-namespace": "off"
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
