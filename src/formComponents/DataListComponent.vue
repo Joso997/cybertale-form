@@ -45,7 +45,10 @@ export default class DataListComponent extends Vue {
   options: Option[] = []
 
   returnIfExists (tag: number): string {
-    return this.object.Stats[tag]?.Data ?? ''
+    if (this.object.Stats[tag]) {
+      return this.object.Stats[tag].Data
+    }
+    return ''
   }
 
   async created() {
@@ -70,7 +73,7 @@ export default class DataListComponent extends Vue {
 
   getValue (statEnum: number, indexStatTypeEnum = StatTypeEnum.Option) : string {
     if (this.object.Stats[statEnum]) {
-      if (this.object.Stats[indexStatTypeEnum] && this.object.Stats[statEnum] && isValidJSON(this.object.Stats[statEnum].Data)) {
+      if (this.object.Stats[indexStatTypeEnum] && this.object.Stats[statEnum] && this.isJSON(this.object.Stats[statEnum].Data)) {
         const data = JSON.parse(this.object.Stats[statEnum].Data)
         return data[Number(this.object.Stats[indexStatTypeEnum].Data)]
       } else {
@@ -82,11 +85,14 @@ export default class DataListComponent extends Vue {
 
   get valueName (): string {
     const temp = this.options.find((option: any) => option.id === this.getValue(StatTypeEnum.Value, StatTypeEnum.ValueIndices))
-    return temp?.name ?? this.getValue(StatTypeEnum.Value, StatTypeEnum.ValueIndices)
+    if (!temp) { return this.getValue(StatTypeEnum.Value, StatTypeEnum.ValueIndices) }
+    return temp?.name
   }
 
   attributeCheck (statType : number) : boolean | string {
-    return this.object.Stats[statType]?.Data ?? false
+    if (this.object.Stats[statType] === undefined) { return false }
+    if (this.object.Stats[statType].Data === '') { return false }
+    return this.object.Stats[statType].Data
   }
 
   validate () : string {
@@ -103,21 +109,23 @@ export default class DataListComponent extends Vue {
     this.regionType.RegionTypes[object.Region].ObjectTypes[object.ObjectEnum].ChooseSubType(object, value)
   }
 
-  isSelected (id : string) : boolean { //previously check
-    return this.object.Stats[this.statTypeEnum.Value]?.Data === id.toString()
+  check (id : string) : boolean {
+    if (this.object.Stats[this.statTypeEnum.Value] === undefined || id === undefined) { return false }
+    return this.object.Stats[this.statTypeEnum.Value].Data === id.toString()
+  }
+
+  isJSON (str: string): boolean {
+    let temp = null
+    try {
+      temp = JSON.parse(str)
+    } catch (e) {
+      return false
+    }
+    return Array.isArray(temp)
   }
 
 }
 
-// Utility function to check if a string is valid JSON
-function isValidJSON(str: string): boolean {
-  try {
-    JSON.parse(str);
-    return true;
-  } catch (e) {
-    return false;
-  }
-}
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
