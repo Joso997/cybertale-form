@@ -1,7 +1,7 @@
 <template>
   <div :class="object?.Stats[statTypeEnum.Design].Data">
     <input class="form-check-input mt-0" type="checkbox"
-           :checked="!!object?.Stats[statTypeEnum.Value].Data"
+           :checked="getValue(statTypeEnum.Value, statTypeEnum.ValueIndices)"
            :id="object?.Stats[statTypeEnum.Tag].Data"
            :required="attributeCheck(statTypeEnum.Required)"
            :disabled="attributeCheck(statTypeEnum.Disabled)"
@@ -40,6 +40,28 @@ export default class CheckBoxComponent extends Vue {
       return this.object.Stats[tag].Data
     }
     return ''
+  }
+
+  getValue (statEnum: number, indexStatTypeEnum = StatTypeEnum.Option) : string {
+    if (this.object.Stats[statEnum]) {
+      if (this.object.Stats[indexStatTypeEnum] && this.object.Stats[statEnum] && this.isJSON(this.object.Stats[statEnum].Data)) {
+        const data = JSON.parse(this.object.Stats[statEnum].Data)
+        return data[Number(this.object.Stats[indexStatTypeEnum].Data)]
+      } else {
+        return this.object.Stats[statEnum].Data
+      }
+    }
+    return ''
+  }
+
+  isJSON (str: string): boolean {
+    let temp = null
+    try {
+      temp = JSON.parse(str)
+    } catch (e) {
+      return false
+    }
+    return Array.isArray(temp)
   }
 
   validate () : string {
