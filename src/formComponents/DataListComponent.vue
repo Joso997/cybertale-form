@@ -2,7 +2,7 @@
   <input class="form-control" :list="object.Stats[statTypeEnum.BelongsTo].Data"
          :class="returnIfExists(statTypeEnum.Design) + ' ' + validate()"
          :required="attributeCheck(statTypeEnum.Required)"
-         :disabled="attributeCheck(statTypeEnum.Disabled)"
+         :disabled="disabledCheck(statTypeEnum.Disabled)"
          :type="returnIfExists(statTypeEnum.ElementType)"
          :value="`${object?.Stats[statTypeEnum.Value].Data !== null ? object.Stats[statTypeEnum.Value].Data.name === undefined ? valueName : object.Stats[statTypeEnum.Value].Data.name : ''}`"
          :placeholder="returnIfExists(statTypeEnum.Placeholder)"
@@ -43,6 +43,7 @@ export default class DataListComponent extends Vue {
   object!: ObjectTemplate
   displayOptions = false
   options: Option[] = []
+  loading = true
 
   returnIfExists (tag: number): string {
     if (this.object.Stats[tag]) {
@@ -53,16 +54,18 @@ export default class DataListComponent extends Vue {
 
   async created() {
     await this.fetchOptions();
+    this.loading = false
   }
 
   // Extract the logic for fetching options data into a separate method
   async fetchOptions() {
+    console.log(this.object.Stats)
     try {
       const parsedObject: { link?: string } = JSON.parse(this.object.Stats[this.statTypeEnum.ItemList].Data)[0];
       if (parsedObject.link) {
-        const response = await http.get(parsedObject.link + '/' + this.object.Stats[this.statTypeEnum.Name].Data);
-        this.options = response.data;
-        this.displayOptions = true;
+        const response = await http.get(parsedObject.link + '/' + this.object.Stats[this.statTypeEnum.Name].Data)
+        this.options = response.data
+        this.object.Stats[this.statTypeEnum.ItemList].Data =  JSON.stringify(response.data)
       } else {
         this.options = JSON.parse(this.object.Stats[this.statTypeEnum.ItemList].Data);
       }
@@ -92,6 +95,12 @@ export default class DataListComponent extends Vue {
   attributeCheck (statType : number) : boolean | string {
     if (this.object.Stats[statType] === undefined) { return false }
     if (this.object.Stats[statType].Data === '') { return false }
+    return this.object.Stats[statType].Data
+  }
+
+  disabledCheck (statType : number) : boolean | string {
+    if (this.object.Stats[statType] === undefined) { return (false || this.loading) }
+    if (this.object.Stats[statType].Data === '') { return (false || this.loading) }
     return this.object.Stats[statType].Data
   }
 
