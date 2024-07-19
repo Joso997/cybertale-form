@@ -11,7 +11,16 @@
     "web",
     "form"
   ],
-  "main": "src/index.ts",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "vue-tsc && vite build",
+    "prepublishOnly": "npm run build"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/Joso997/cybertale-form.git"
@@ -19,20 +28,22 @@
   "directories": {
     "lib": "src"
   },
-  "types": "src/index.d.ts",
-  "module": "src/index.ts",
   "exports": {
     ".": {
-      "import": "./src/index.ts",
-      "require": "./src/index.ts"
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
     }
   },
   "dependencies": {
     "@cybertale/interface": "^2.0.6",
-    "vue": "^3.4.30"
+    "@vitejs/plugin-vue": "^5.0.5",
+    "typescript": "^5.5.3",
+    "vite": "^5.3.4",
+    "vue": "^3.4.33",
+    "vue-facing-decorator": "^3.0.4"
   },
   "devDependencies": {
-    "typescript": "~5.4.0",
-    "vue-facing-decorator": "^3.0.4"
+    "@vue/tsconfig": "^0.5.1",
+    "vue-tsc": "^2.0.26"
   }
 }
