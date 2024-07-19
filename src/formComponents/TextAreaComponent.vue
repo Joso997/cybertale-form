@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-facing-decorator'
+import { Component, Vue, Prop } from 'vue-facing-decorator'
 import { ObjectTemplate, ObjectType, StatTypeEnum, ObjectTypeEnum } from '@cybertale/interface'
 @Component
 export default class InputComponent extends Vue {
