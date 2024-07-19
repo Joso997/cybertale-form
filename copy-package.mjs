@@ -6,6 +6,8 @@ const prompt = promptSync();
 
 // Resolve paths relative to the script location
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
+
+// Correct the source and destination directory paths
 const sourceDir = path.resolve(__dirname, '../node_modules/@cybertale/form/src');
 const destDir = path.resolve(__dirname, '../src/@cybertale/form');
 
@@ -47,6 +49,7 @@ const copyFiles = async (source, destination) => {
 // Check if the destination directory already exists
 const checkAndCopy = async () => {
   try {
+    // Ensure destination directory exists or create it
     await ensureDir(destDir);
 
     const destExists = (await fs.readdir(destDir)).length > 0;
