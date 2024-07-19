@@ -1,6 +1,6 @@
 {
   "name": "@cybertale/form",
-  "version": "2.0.3",
+  "version": "2.0.2",
   "description": "ECS interface for Web Development, CyberTale edition.",
   "author": "Joso Marich <jspmari@proton.me>",
   "license": "GPL-3.0-only",
@@ -11,16 +11,7 @@
     "web",
     "form"
   ],
-  "main": "dist/index.cjs",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
-  "scripts": {
-    "build": "vue-tsc && vite build",
-    "prepublishOnly": "npm run build"
-  },
+  "main": "src/index.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/Joso997/cybertale-form.git"
@@ -28,22 +19,20 @@
   "directories": {
     "lib": "src"
   },
+  "types": "src/index.d.ts",
+  "module": "src/index.ts",
   "exports": {
     ".": {
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+      "import": "./src/index.ts",
+      "require": "./src/index.ts"
     }
   },
   "dependencies": {
     "@cybertale/interface": "^2.0.6",
-    "@vitejs/plugin-vue": "^5.0.5",
-    "typescript": "^5.5.3",
-    "vite": "^5.3.4",
-    "vue": "^3.4.33",
-    "vue-facing-decorator": "^3.0.4"
+    "vue": "^3.4.30"
   },
   "devDependencies": {
-    "@vue/tsconfig": "^0.5.1",
-    "vue-tsc": "^2.0.26"
+    "typescript": "~5.4.0",
+    "vue-facing-decorator": "^3.0.4"
   }
 }
