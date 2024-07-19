@@ -19,7 +19,7 @@
   "directories": {
     "lib": "src"
   },
-  "types": "src/index.d.ts",
+  "types": "src/index.ts",
   "module": "src/index.ts",
   "exports": {
     ".": {
