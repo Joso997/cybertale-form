@@ -1,6 +1,6 @@
 {
   "name": "@cybertale/form",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "ECS interface for Web Development, CyberTale edition.",
   "author": "Joso Marich <jspmari@proton.me>",
   "license": "GPL-3.0-only",
@@ -32,9 +32,6 @@
     "vue": "^3.4.30"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^7.16.1",
-    "@typescript-eslint/parser": "^7.16.1",
-    "eslint": "^9.7.0",
     "typescript": "~5.4.0",
     "vue-facing-decorator": "^3.0.4"
   },
@@ -50,9 +47,6 @@
     "parserOptions": {
       "ecmaVersion": 2020,
       "sourceType": "module"
-    },
-    "rules": {
-      "@typescript-eslint/no-namespace": "off"
     }
   },
   "browserslist": [
