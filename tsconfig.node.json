@@ -1,20 +1,10 @@
 {
-  "extends": "@tsconfig/node20/tsconfig.json",
-  "include": [
-    "vite.config.*",
-    "vitest.config.*",
-    "cypress.config.*",
-    "nightwatch.conf.*",
-    "playwright.config.*",
-    "vite-plugin-vue-facing-decorator-hmr.ts"
-  ],
   "compilerOptions": {
     "composite": true,
-    "noEmit": false,
-    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
-
+    "skipLibCheck": true,
     "module": "ESNext",
-    "moduleResolution": "Bundler",
-    "types": ["node"]
-  }
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["vite.config.ts"]
 }
