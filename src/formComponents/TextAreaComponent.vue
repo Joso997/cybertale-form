@@ -12,18 +12,15 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component'
+import { Component, Vue } from 'vue-facing-decorator'
 import { ObjectTemplate, ObjectType, StatTypeEnum, ObjectTypeEnum } from '@cybertale/interface'
-@Options({
-  props: {
-    object: ObjectTemplate
-  }
-})
+@Component
 export default class InputComponent extends Vue {
+  @Prop() object!: ObjectTemplate
+
   statTypeEnum = StatTypeEnum
   objectTypeEnum = ObjectTypeEnum
   objectType = ObjectType
-  object!: ObjectTemplate
 }
 </script>
 

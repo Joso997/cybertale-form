@@ -3,20 +3,17 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component'
+import { Component, Prop, Vue } from 'vue-facing-decorator'
 import { ObjectTemplate, ObjectType, StatTypeEnum, ObjectTypeEnum, RegionType, RegionEnum } from '@cybertale/interface'
-@Options({
-  props: {
-    object: ObjectTemplate
-  }
-})
+@Component
 export default class LabelComponent extends Vue {
+  @Prop() object!: ObjectTemplate
+
   statTypeEnum = StatTypeEnum
   objectTypeEnum = ObjectTypeEnum
   objectType = ObjectType
   regionType = RegionType
   regionEnum = RegionEnum
-  object!: ObjectTemplate
 
   validate () : string {
     if (this.object.Stats[this.statTypeEnum.IsValid] === undefined) { return '' }

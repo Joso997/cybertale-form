@@ -13,35 +13,27 @@
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component'
+import { Vue, Component, Prop } from 'vue-facing-decorator'
 import { ObjectTemplate, ObjectType, ObjectTypeEnum, RegionEnum, RegionType, StatTypeEnum } from '@cybertale/interface'
 
-@Options({
-  computed: {
-    ObjectTemplate () {
-      return ObjectTemplate
-    }
-  },
-  props: {
-    object: ObjectTemplate
-  }
-})
+@Component
 export default class FieldComponent extends Vue {
+  @Prop() object!: ObjectTemplate
+
   statTypeEnum = StatTypeEnum
   objectTypeEnum = ObjectTypeEnum
   objectType = ObjectType
   regionType = RegionType
   regionEnum = RegionEnum
-  object!: ObjectTemplate
 
-  labelToValue (): string {
+  labelToValue(): string {
     if (this.returnIfExists(this.statTypeEnum.Tag).includes('label') && this.attributeCheck(this.statTypeEnum.Disabled)) {
       return this.returnIfExists(this.statTypeEnum.Label)
     }
     return this.getValue(StatTypeEnum.Value, StatTypeEnum.ValueIndices)
   }
 
-  getValue (statEnum: number, indexStatTypeEnum = StatTypeEnum.Option) : string {
+  getValue(statEnum: number, indexStatTypeEnum = StatTypeEnum.Option): string {
     if (this.object.Stats[statEnum]) {
       if (this.object.Stats[indexStatTypeEnum] && this.object.Stats[statEnum] && this.isJSON(this.object.Stats[statEnum].Data)) {
         const data = JSON.parse(this.object.Stats[statEnum].Data)
@@ -53,24 +45,20 @@ export default class FieldComponent extends Vue {
     return ''
   }
 
-  isJSON (str: string): boolean {
-    let temp = null
+  isJSON(str: string): boolean {
     try {
-      temp = JSON.parse(str)
+      const temp = JSON.parse(str)
+      return Array.isArray(temp)
     } catch (e) {
       return false
     }
-    return Array.isArray(temp)
   }
 
-  returnIfExists (tag: number): string {
-    if (this.object.Stats[tag]) {
-      return this.object.Stats[tag].Data
-    }
-    return ''
+  returnIfExists(tag: number): string {
+    return this.object.Stats[tag]?.Data ?? ''
   }
 
-  validate () : string {
+  validate(): string {
     if (this.object.Stats[this.statTypeEnum.IsValid] === undefined) { return '' }
     if (this.object.Stats[this.statTypeEnum.IsValid].Data === '') { return '' }
     if (this.object.Stats[this.statTypeEnum.IsValid].Data) { return 'is-valid' }
@@ -79,28 +67,23 @@ export default class FieldComponent extends Vue {
     return ''
   }
 
-  attributeCheck (statType : number) : boolean | string {
+  attributeCheck(statType: number): boolean | string {
     if (this.object.Stats[statType] === undefined) { return false }
     if (this.object.Stats[statType].Data === '') { return false }
     return this.object.Stats[statType].Data
   }
 
-  tooltipCase () : string | undefined {
-    if (this.object !== undefined) {
-      if (this.object.Stats[this.statTypeEnum.Tooltip] !== undefined) {
-        return this.object.Stats[this.statTypeEnum.Tooltip].Data
-      }
-    }
+  tooltipCase(): string | undefined {
+    return this.object?.Stats[this.statTypeEnum.Tooltip]?.Data
   }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.form-check .form-check-input{
+.form-check .form-check-input {
   float: none;
 }
-.form-check-input{
+.form-check-input {
   margin-right: 1%;
 }
 .form-check-input:checked {

@@ -1,50 +1,40 @@
 <template>
-  <div :class="object?.Stats[statTypeEnum.Design].Data">
+  <div :class="object?.Stats[StatTypeEnum.Design].Data">
     <input class="form-check-input mt-0" type="checkbox"
-           :checked="getValue(statTypeEnum.Value, statTypeEnum.ValueIndices)"
-           :id="object?.Stats[statTypeEnum.Tag].Data"
-           :required="attributeCheck(statTypeEnum.Required)"
-           :disabled="attributeCheck(statTypeEnum.Disabled)"
+           :checked="getValue(StatTypeEnum.Value, StatTypeEnum.ValueIndices)"
+           :id="object?.Stats[StatTypeEnum.Tag].Data"
+           :required="attributeCheck(StatTypeEnum.Required)"
+           :disabled="attributeCheck(StatTypeEnum.Disabled)"
            :class="validate()"
-           @input="regionType.RegionTypes[object?.Region].ObjectTypes[object?.ObjectEnum].ChooseSubType(object as ObjectTemplate, $event.target.checked)">
-    <label v-if="returnIfExists(statTypeEnum.Label) !== ''" class="form-check-label" for="flexCheckDefault">
-      {{ object.Stats[statTypeEnum.Label].Data }}
+           @input="handleInput">
+    <label v-if="returnIfExists(StatTypeEnum.Label) !== ''" class="form-check-label" :for="object?.Stats[StatTypeEnum.Tag].Data">
+      {{ object.Stats[StatTypeEnum.Label].Data }}
     </label>
   </div>
-  <div class="invalid-feedback">{{ returnIfExists(statTypeEnum.ErrorMessage) }}</div>
+  <div class="invalid-feedback">{{ returnIfExists(StatTypeEnum.ErrorMessage) }}</div>
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component'
+import { Vue, Component, Prop } from 'vue-facing-decorator'
 import { ObjectTemplate, ObjectType, StatTypeEnum, ObjectTypeEnum, RegionType, RegionEnum } from '@cybertale/interface'
-@Options({
-  computed: {
-    ObjectTemplate () {
-      return ObjectTemplate
-    }
-  },
-  props: {
-    object: ObjectTemplate
-  }
-})
+
+@Component
 export default class CheckBoxComponent extends Vue {
-  statTypeEnum = StatTypeEnum
-  objectTypeEnum = ObjectTypeEnum
-  objectType = ObjectType
-  regionType = RegionType
-  regionEnum = RegionEnum
-  object!: ObjectTemplate
+  @Prop() object!: ObjectTemplate
 
-  returnIfExists (tag: number): string {
-    if (this.object.Stats[tag]) {
-      return this.object.Stats[tag].Data
-    }
-    return ''
+  readonly StatTypeEnum = StatTypeEnum
+  readonly ObjectTypeEnum = ObjectTypeEnum
+  readonly ObjectType = ObjectType
+  readonly RegionType = RegionType
+  readonly RegionEnum = RegionEnum
+
+  returnIfExists(tag: number): string {
+    return this.object.Stats[tag]?.Data ?? ''
   }
 
-  getValue (statEnum: number, indexStatTypeEnum = StatTypeEnum.Option) : string {
+  getValue(statEnum: number, indexStatTypeEnum = StatTypeEnum.Option): string {
     if (this.object.Stats[statEnum]) {
-      if (this.object.Stats[indexStatTypeEnum] && this.object.Stats[statEnum] && this.isJSON(this.object.Stats[statEnum].Data)) {
+      if (this.object.Stats[indexStatTypeEnum] && this.isJSON(this.object.Stats[statEnum].Data)) {
         const data = JSON.parse(this.object.Stats[statEnum].Data)
         return data[Number(this.object.Stats[indexStatTypeEnum].Data)]
       } else {
@@ -54,47 +44,43 @@ export default class CheckBoxComponent extends Vue {
     return ''
   }
 
-  isJSON (str: string): boolean {
-    let temp = null
+  isJSON(str: string): boolean {
     try {
-      temp = JSON.parse(str)
-    } catch (e) {
+      const temp = JSON.parse(str)
+      return Array.isArray(temp)
+    } catch {
       return false
     }
-    return Array.isArray(temp)
   }
 
-  validate () : string {
-    if (this.object.Stats[this.statTypeEnum.IsValid] === undefined) { return '' }
-    if (this.object.Stats[this.statTypeEnum.IsValid].Data === '') { return '' }
-    if (this.object.Stats[this.statTypeEnum.IsValid].Data) { return 'is-valid' }
-    if (this.object.Stats[this.statTypeEnum.ErrorMessage].Data === null) { return '' }
-    if (this.object.Stats[this.statTypeEnum.ErrorMessage].Data !== '') { return 'is-invalid' }
+  validate(): string {
+    const isValid = this.object.Stats[this.StatTypeEnum.IsValid]
+    if (isValid === undefined || isValid.Data === '') return ''
+    if (isValid.Data) return 'is-valid'
+    if (this.object.Stats[this.StatTypeEnum.ErrorMessage]?.Data !== '') return 'is-invalid'
     return ''
   }
 
-  specialCase () : boolean {
-    if (this.object.Stats[this.statTypeEnum.ElementType] === undefined) { return false }
-    return this.object.Stats[this.statTypeEnum.ElementType].Data === 'hidden'
+  specialCase(): boolean {
+    return this.object.Stats[this.StatTypeEnum.ElementType]?.Data === 'hidden'
   }
 
-  attributeCheck (statType : number) : boolean | string {
-    if (this.object.Stats[statType] === undefined) { return false }
-    if (this.object.Stats[statType].Data === '') { return false }
-    return this.object.Stats[statType].Data
+  attributeCheck(statType: number): boolean | string {
+    const stat = this.object.Stats[statType]
+    return stat === undefined || stat.Data === '' ? false : stat.Data
   }
 
-  tooltipCase () : string | undefined {
-    if (this.object !== undefined) {
-      if (this.object.Stats[this.statTypeEnum.Tooltip] !== undefined) {
-        return this.object.Stats[this.statTypeEnum.Tooltip].Data
-      }
-    }
+  tooltipCase(): string | undefined {
+    return this.object?.Stats[this.StatTypeEnum.Tooltip]?.Data
+  }
+
+  handleInput(event: Event): void {
+    const target = event.target as HTMLInputElement
+    this.RegionType.RegionTypes[this.object?.Region].ObjectTypes[this.object?.ObjectEnum].ChooseSubType(this.object as ObjectTemplate, target.checked)
   }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .form-check-input:checked {
   background-color: #606467;

@@ -13,7 +13,7 @@
   <div class="invalid-feedback order-1">{{ returnIfExists(statTypeEnum.ErrorMessage) }}</div>
 </template>
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component'
+import { Component, Prop, Vue } from 'vue-facing-decorator'
 import { ObjectTemplate, ObjectType, ObjectTypeEnum, RegionEnum, RegionType, StatTypeEnum } from '@cybertale/interface'
 import http from '@/http-common'
 
@@ -24,28 +24,24 @@ interface Option {
 
 const MIN_SEARCH_LENGTH = 3;
 
-@Options({
-  computed: {
-    ObjectTemplate () {
-      return ObjectTemplate
-    }
-  },
-  props: {
-    object: ObjectTemplate
-  }
-})
+@Component
 export default class DataListComponent extends Vue {
+  @Prop() object!: ObjectTemplate
+
   statTypeEnum = StatTypeEnum
   objectTypeEnum = ObjectTypeEnum
   objectType = ObjectType
   regionType = RegionType
   regionEnum = RegionEnum
-  object!: ObjectTemplate
   displayOptions = false
   options: Option[] = []
   loading = true
 
-  returnIfExists (tag: number): string {
+  get ObjectTemplate() {
+    return ObjectTemplate
+  }
+
+  returnIfExists(tag: number): string {
     if (this.object.Stats[tag]) {
       return this.object.Stats[tag].Data
     }
@@ -57,7 +53,6 @@ export default class DataListComponent extends Vue {
     this.loading = false
   }
 
-  // Extract the logic for fetching options data into a separate method
   async fetchOptions() {
     console.log(this.object.Stats)
     try {
@@ -65,7 +60,7 @@ export default class DataListComponent extends Vue {
       if (parsedObject.link) {
         const response = await http.get(parsedObject.link + '/' + this.object.Stats[this.statTypeEnum.Name].Data)
         this.options = response.data
-        this.object.Stats[this.statTypeEnum.ItemList].Data =  JSON.stringify(response.data)
+        this.object.Stats[this.statTypeEnum.ItemList].Data = JSON.stringify(response.data)
       } else {
         this.options = JSON.parse(this.object.Stats[this.statTypeEnum.ItemList].Data);
       }
@@ -74,7 +69,7 @@ export default class DataListComponent extends Vue {
     }
   }
 
-  getValue (statEnum: number, indexStatTypeEnum = StatTypeEnum.Option) : string {
+  getValue(statEnum: number, indexStatTypeEnum = StatTypeEnum.Option): string {
     if (this.object.Stats[statEnum]) {
       if (this.object.Stats[indexStatTypeEnum] && this.object.Stats[statEnum] && this.isJSON(this.object.Stats[statEnum].Data)) {
         const data = JSON.parse(this.object.Stats[statEnum].Data)
@@ -86,25 +81,25 @@ export default class DataListComponent extends Vue {
     return ''
   }
 
-  get valueName (): string {
+  get valueName(): string {
     const temp = this.options.find((option: any) => option.id === this.getValue(StatTypeEnum.Value, StatTypeEnum.ValueIndices))
     if (!temp) { return this.getValue(StatTypeEnum.Value, StatTypeEnum.ValueIndices) }
     return temp?.name
   }
 
-  attributeCheck (statType : number) : boolean | string {
+  attributeCheck(statType: number): boolean | string {
     if (this.object.Stats[statType] === undefined) { return false }
     if (this.object.Stats[statType].Data === '') { return false }
     return this.object.Stats[statType].Data
   }
 
-  disabledCheck (statType : number) : boolean | string {
+  disabledCheck(statType: number): boolean | string {
     if (this.object.Stats[statType] === undefined) { return (false || this.loading) }
     if (this.object.Stats[statType].Data === '') { return (false || this.loading) }
     return this.object.Stats[statType].Data
   }
 
-  validate () : string {
+  validate(): string {
     if (this.object.Stats[this.statTypeEnum.IsValid] === undefined) { return '' }
     if (this.object.Stats[this.statTypeEnum.IsValid].Data === '') { return '' }
     if (this.object.Stats[this.statTypeEnum.IsValid].Data) { return 'is-valid' }
@@ -113,17 +108,17 @@ export default class DataListComponent extends Vue {
     return ''
   }
 
-  inputEvent (object: ObjectTemplate, value: string) : void {
+  inputEvent(object: ObjectTemplate, value: string): void {
     this.displayOptions = value.length >= MIN_SEARCH_LENGTH
     this.regionType.RegionTypes[object.Region].ObjectTypes[object.ObjectEnum].ChooseSubType(object, value)
   }
 
-  check (id : string) : boolean {
+  check(id: string): boolean {
     if (this.object.Stats[this.statTypeEnum.Value] === undefined || id === undefined) { return false }
     return this.object.Stats[this.statTypeEnum.Value].Data === id.toString()
   }
 
-  isJSON (str: string): boolean {
+  isJSON(str: string): boolean {
     let temp = null
     try {
       temp = JSON.parse(str)
@@ -132,9 +127,7 @@ export default class DataListComponent extends Vue {
     }
     return Array.isArray(temp)
   }
-
 }
-
 </script>
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>

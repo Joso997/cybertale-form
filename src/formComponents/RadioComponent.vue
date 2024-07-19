@@ -6,8 +6,8 @@
                :name="object.Stats[statTypeEnum.Tag].Data"
                :value="item.id" type="radio"
                :checked="object.Stats[statTypeEnum.Value].Data===item.id"
-               @input="regionType.RegionTypes[object.Region].ObjectTypes[object.ObjectEnum].ChooseSubType(object as ObjectTemplate, $event.target.value)">
-        <label class="form-check-label" for="flexCheckDefault">
+               @input="handleInput($event, item.id)">
+        <label class="form-check-label" :for="item.id">
           {{ item.name }}
         </label>
       </div>
@@ -18,47 +18,43 @@
              :value="object.Stats[statTypeEnum.ItemList].Data"
              type="radio"
              :checked="object.Stats[statTypeEnum.ItemList].Data===object.Stats[statTypeEnum.Value].Data"
-             @input="regionType.RegionTypes[object.Region].ObjectTypes[object.ObjectEnum].ChooseSubType(object as ObjectTemplate, $event.target.value)">
+             @input="handleInput($event, object.Stats[statTypeEnum.ItemList].Data)">
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { Options, Vue } from 'vue-class-component'
+import { Vue, Prop, Component } from 'vue-facing-decorator'
 import { ObjectTemplate, ObjectType, StatTypeEnum, ObjectTypeEnum, RegionType, RegionEnum } from '@cybertale/interface'
-@Options({
-  computed: {
-    ObjectTemplate () {
-      return ObjectTemplate
-    }
-  },
-  props: {
-    object: ObjectTemplate
-  }
-})
+
+@Component
 export default class RadioComponent extends Vue {
+  @Prop() object!: ObjectTemplate
+
   statTypeEnum = StatTypeEnum
   objectTypeEnum = ObjectTypeEnum
   objectType = ObjectType
   regionType = RegionType
   regionEnum = RegionEnum
-  object!: ObjectTemplate
 
-  returnIfExists (tag: number): string {
+  returnIfExists(tag: number): string {
     if (this.object.Stats[tag]) {
       return this.object.Stats[tag].Data
     }
     return ''
   }
+
+  handleInput(event: Event, value: string) {
+    this.regionType.RegionTypes[this.object.Region].ObjectTypes[this.object.ObjectEnum].ChooseSubType(this.object as ObjectTemplate, value)
+  }
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.form-check .form-check-input{
+.form-check .form-check-input {
   float: none;
 }
-.form-check-input{
+.form-check-input {
   margin-right: 1%;
 }
 .form-check-input:checked {
