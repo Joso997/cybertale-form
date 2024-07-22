@@ -9,19 +9,10 @@ const prompt = promptSync();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Correct the source and destination directory paths
-const sourceDir = path.resolve(__dirname, '..', 'src');
+const sourceDir = path.resolve(__dirname, 'src');
 const destDir = path.resolve(process.cwd(), 'src', '@cybertale', 'form');
 
-// Create the destination directory if it doesn't exist
-const ensureDir = async (dir) => {
-  try {
-    await fs.mkdir(dir, { recursive: true });
-  } catch (err) {
-    if (err.code !== 'EEXIST') {
-      throw err;
-    }
-  }
-};
+// Rest of the script remains the same...
 
 // Function to copy files and directories
 const copyFiles = async (source, destination) => {
@@ -44,6 +35,7 @@ const copyFiles = async (source, destination) => {
     }
   } catch (err) {
     console.error('Error copying files:', err);
+    throw err; // Re-throw the error to be caught in the calling function
   }
 };
 
