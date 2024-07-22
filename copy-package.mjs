@@ -12,7 +12,16 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const sourceDir = path.resolve(__dirname, 'src');
 const destDir = path.resolve(process.cwd(), 'src', '@cybertale', 'form');
 
-// Rest of the script remains the same...
+// Create the destination directory if it doesn't exist
+const ensureDir = async (dir) => {
+  try {
+    await fs.mkdir(dir, { recursive: true });
+  } catch (err) {
+    if (err.code !== 'EEXIST') {
+      throw err;
+    }
+  }
+};
 
 // Function to copy files and directories
 const copyFiles = async (source, destination) => {
@@ -35,7 +44,7 @@ const copyFiles = async (source, destination) => {
     }
   } catch (err) {
     console.error('Error copying files:', err);
-    throw err; // Re-throw the error to be caught in the calling function
+    throw err;
   }
 };
 
