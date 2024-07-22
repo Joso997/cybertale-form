@@ -1,15 +1,16 @@
 import { promises as fs } from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import promptSync from 'prompt-sync';
 
 const prompt = promptSync();
 
-// Resolve paths relative to the script location
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
+// Get the directory name of the current module
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Correct the source and destination directory paths
-const sourceDir = path.resolve(__dirname, '../node_modules/@cybertale/form/src');
-const destDir = path.resolve(__dirname, '../src/@cybertale/form');
+const sourceDir = path.resolve(__dirname, '..', 'src');
+const destDir = path.resolve(process.cwd(), 'src', '@cybertale', 'form');
 
 // Create the destination directory if it doesn't exist
 const ensureDir = async (dir) => {
