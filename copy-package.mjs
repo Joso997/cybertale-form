@@ -9,8 +9,8 @@ const prompt = promptSync();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Correct the source and destination directory paths
-const sourceDir = path.resolve(__dirname, 'src');
-const destDir = path.resolve(process.cwd(), 'src', '@cybertale', 'form');
+const sourceDir = path.join(__dirname, 'src');
+const destDir = path.join(process.cwd(), 'src', '@cybertale', 'form');
 
 // Create the destination directory if it doesn't exist
 const ensureDir = async (dir) => {
