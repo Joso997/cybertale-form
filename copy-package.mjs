@@ -57,11 +57,8 @@ const checkAndCopy = async () => {
     const destExists = (await fs.readdir(destDir)).length > 0;
 
     if (destExists) {
-      const response = prompt('The destination directory already exists. Do you want to overwrite it? (yes/no): ').toLowerCase();
-      if (response !== 'yes') {
-        console.log('Operation cancelled.');
-        return;
-      }
+      // Automatically overwrite without prompting
+      console.log('The destination directory already exists. Overwriting...');
 
       // Empty the destination directory before copying
       await fs.rm(destDir, { recursive: true, force: true });
