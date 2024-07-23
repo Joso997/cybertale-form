@@ -40,7 +40,6 @@
     "vite": "^5.3.4"
   },
   "scripts": {
-    "copy-package": "node copy-package.mjs",
-    "prepare": "npm run copy-package"
+    "copy-package": "node copy-package.mjs"
   }
 }
