@@ -1,15 +1,19 @@
 <template>
-  <input class="form-control"
-         :id="object?.Stats[statTypeEnum.Tag].Data"
-         :required="attributeCheck(statTypeEnum.Required)"
-         :disabled="attributeCheck(statTypeEnum.Disabled)"
-         :autocomplete="returnIfExists(statTypeEnum.AutoComplete)"
-         :class="object?.Stats[statTypeEnum.Design].Data+' '+validate()"
-         :type="getValue(statTypeEnum.ElementType)"
-         :value="labelToValue()"
-         :placeholder="returnIfExists(statTypeEnum.Placeholder)"
-         @input="regionType.RegionTypes[object?.Region].ObjectTypes[object?.ObjectEnum].ChooseSubType(object as ObjectTemplate, $event.target.value)">
-  <div class="invalid-feedback">{{ returnIfExists(statTypeEnum.ErrorMessage) }}</div>
+  <input
+    class="form-control"
+    :id="getStatData(StatTypeEnum.Tag)"
+    :required="getStatData(StatTypeEnum.Required, 'boolean')"
+    :disabled="getStatData(StatTypeEnum.Disabled, 'boolean')"
+    :autocomplete="getStatData(StatTypeEnum.AutoComplete)"
+    :class="[getStatData(StatTypeEnum.Design), validationClass]"
+    :type="getInputType()"
+    :value="computedValue"
+    :placeholder="getStatData(StatTypeEnum.Placeholder)"
+    @input="handleInput"
+  />
+  <div v-if="showErrorMessage" class="invalid-feedback">
+    {{ getStatData(StatTypeEnum.ErrorMessage) }}
+  </div>
 </template>
 
 <script lang="ts">
@@ -20,74 +24,85 @@ import { ObjectTemplate, ObjectType, ObjectTypeEnum, RegionEnum, RegionType, Sta
 export default class FieldComponent extends Vue {
   @Prop() object!: ObjectTemplate
 
-  statTypeEnum = StatTypeEnum
-  objectTypeEnum = ObjectTypeEnum
-  objectType = ObjectType
-  regionType = RegionType
-  regionEnum = RegionEnum
+  // Enums
+  StatTypeEnum = StatTypeEnum
+  ObjectTypeEnum = ObjectTypeEnum
+  RegionEnum = RegionEnum
 
-  labelToValue(): string {
-    if (this.returnIfExists(this.statTypeEnum.Tag).includes('label') && this.attributeCheck(this.statTypeEnum.Disabled)) {
-      return this.returnIfExists(this.statTypeEnum.Label)
+  // Computed properties
+  get computedValue(): string {
+    if (this.isLabelDisabled) {
+      return this.getStatData(StatTypeEnum.Label)
     }
     return this.getValue(StatTypeEnum.Value, StatTypeEnum.ValueIndices)
   }
 
-  getValue(statEnum: number, indexStatTypeEnum = StatTypeEnum.Option): string {
-    if (this.object.Stats[statEnum]) {
-      if (this.object.Stats[indexStatTypeEnum] && this.object.Stats[statEnum] && this.isJSON(this.object.Stats[statEnum].Data)) {
-        const data = JSON.parse(this.object.Stats[statEnum].Data)
-        return data[Number(this.object.Stats[indexStatTypeEnum].Data)]
-      } else {
-        return this.object.Stats[statEnum].Data
-      }
-    }
+  get isLabelDisabled(): boolean {
+    return this.getStatData(StatTypeEnum.Tag).includes('label') &&
+      this.getStatData(StatTypeEnum.Disabled, 'boolean')
+  }
+
+  get validationClass(): string {
+    const isValid = this.getStatData(StatTypeEnum.IsValid, 'boolean')
+    const errorMessage = this.getStatData(StatTypeEnum.ErrorMessage)
+
+    if (isValid === undefined || isValid === '') return ''
+    if (isValid) return 'is-valid'
+    if (errorMessage) return 'is-invalid'
     return ''
+  }
+
+  get showErrorMessage(): boolean {
+    return this.validationClass === 'is-invalid'
+  }
+
+  // Methods
+  getInputType(): string {
+    return this.getValue(StatTypeEnum.ElementType)
+  }
+
+  handleInput(event: Event): void {
+    const target = event.target as HTMLInputElement
+    const { Region, ObjectEnum } = this.object
+    console.log(target.value)
+    RegionType.RegionTypes[Region].ObjectTypes[ObjectEnum].ChooseSubType(this.object, target.value)
+  }
+
+  getValue( statEnum: StatTypeEnum, indexStatTypeEnum = StatTypeEnum.Option): string {
+    const tempData:string = this.getStatData(statEnum)
+    if (!tempData) return '';
+
+    if (this.statIsDefined(indexStatTypeEnum) && this.isJSON(tempData)) {
+      const data = JSON.parse(tempData);
+      return data[Number(this.getStatData(indexStatTypeEnum))] || '';
+    }
+
+    return tempData;
+  }
+
+  statIsDefined (statType: StatTypeEnum): boolean {
+    return !!this.object.Stats[statType]
+  }
+
+  getStatData(statType: StatTypeEnum, returnType: 'boolean' | 'string' = 'string'): boolean | string {
+    try {
+      const data = this.object.Stats[statType]?.Data ?? ''
+      return returnType === 'boolean' ? !!data : data
+    } catch (error) {
+      return returnType === 'boolean' ? false : ''
+    }
   }
 
   isJSON(str: string): boolean {
     try {
-      const temp = JSON.parse(str)
-      return Array.isArray(temp)
-    } catch (e) {
+      return Array.isArray(JSON.parse(str))
+    } catch {
       return false
     }
   }
 
-  returnIfExists(tag: number): string {
-    return this.object.Stats[tag]?.Data ?? ''
-  }
-
-  validate(): string {
-    if (this.object.Stats[this.statTypeEnum.IsValid] === undefined) { return '' }
-    if (this.object.Stats[this.statTypeEnum.IsValid].Data === '') { return '' }
-    if (this.object.Stats[this.statTypeEnum.IsValid].Data) { return 'is-valid' }
-    if (this.object.Stats[this.statTypeEnum.ErrorMessage].Data === null) { return '' }
-    if (this.object.Stats[this.statTypeEnum.ErrorMessage].Data !== '') { return 'is-invalid' }
-    return ''
-  }
-
-  attributeCheck(statType: number): boolean | string {
-    if (this.object.Stats[statType] === undefined) { return false }
-    if (this.object.Stats[statType].Data === '') { return false }
-    return this.object.Stats[statType].Data
-  }
-
   tooltipCase(): string | undefined {
-    return this.object?.Stats[this.statTypeEnum.Tooltip]?.Data
+    return this.object?.Stats[StatTypeEnum.Tooltip]?.Data
   }
 }
 </script>
-
-<style scoped>
-.form-check .form-check-input {
-  float: none;
-}
-.form-check-input {
-  margin-right: 1%;
-}
-.form-check-input:checked {
-  background-color: #606467;
-  border-color: #606467;
-}
-</style>

@@ -1,6 +1,6 @@
 {
   "name": "@cybertale/form",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "ECS interface for Web Development, CyberTale edition.",
   "author": "Joso Marich <jspmari@proton.me>",
   "license": "GPL-3.0-only",
