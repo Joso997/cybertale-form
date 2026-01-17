@@ -30,13 +30,9 @@
   "dependencies": {
     "@cybertale/interface": "^2.0.6",
     "typescript": "^5.5.3",
-    "vue": "^3.4.33",
-    "vue-facing-decorator": "^3.0.4",
     "prompt-sync": "^4.2.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^5.0.5",
-    "@vue/compiler-sfc": "^3.4.33",
     "vite": "^5.3.4"
   },
   "scripts": {
