@@ -17,7 +17,7 @@ export function buildDataListModel(object: ObjectTemplate) {
     name: GetStringStat(object, StatTypeEnum.Name),
     designClass: GetStringStat(object, StatTypeEnum.Design),
     required: GetStatData(object, StatTypeEnum.Required, 'boolean') as boolean,
-    disabled: GetStatData(object, StatTypeEnum.Disabled, 'boolean') as boolean,
+    disabled: GetValue(object, StatTypeEnum.Disabled) as boolean,
     type: GetStringStat(object, StatTypeEnum.ElementType),
     placeholder: GetStringStat(object, StatTypeEnum.Placeholder),
     validationClass: GetValidationClass(object),
